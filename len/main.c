@@ -158,8 +158,22 @@ int main(int argc, char **argv) {
 	long count = 1;
 
 	if (arg_showHelp) {
-		// TODO
-		printf("TODO: implement help\n");
+		printf(
+			"%s [options...] <args...>\n"
+			"%s -f [options...] <file name>\n"
+			"gets the length of the specified string(s)/file\n"
+			"----\n"
+			"options:\n"
+			"  -f  | --use-file      makes first argument be the name of a file to read\n"
+			"  -s  | --separator     sets a different separator from ' '\n"
+			"  -l  | --limit         sets a limit to exit with error code 1 after reaching it\n"
+			"  -?  | --help          shows this help\n"
+			"  -ns | --no-separator  counts just characters; ignores -s\n"
+			"----\n"
+			"written by Matto58 and licensed under the CC BY-SA 4.0 license:\n"
+			"https://creativecommons.org/licenses/by-sa/4.0\n"
+			"report bugs/suggestions at https://github.com/BrilliantOS/mtutils/issues\n"
+			"(english or czech)\n", argv[0], argv[0]);
 		return 0;
 	}
 
