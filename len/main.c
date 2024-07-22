@@ -67,21 +67,21 @@ int orCmpS(const char *source, const char *matchA, const char *matchB) {
 // desc:
 // 	calculates the length of the specified str and puts the value in count
 // args:
-// 	char *str - the string, duh
+// 	char *str   - the string, duh
 // 	long *count - pointer to the count, duh (part ii)
-void lenStr(char *str, long *count) {
+// 	long limit  - string length limit
+void lenStr(char *str, long *count, long limit) {
 #ifdef DEBUG
-	printf("DEBUG: entered lenStr with count=%d\n", *count);
+	printf("DEBUG: entered lenStr with count=%d, limit=%d\n", *count, limit);
 #endif
 	if (arg_noSeparator) {
 #ifdef DEBUG
 		printf("DEBUG: -ns specified\n");
 #endif
-		// a bit unsafe but it should be fine i think
-		(*count) += strlen(str);
+		(*count) += strnlen(str, limit);
 	}
 	else {
-		size_t len = strlen(str);
+		size_t len = strnlen(str, limit);
 #ifdef DEBUG
 		printf("DEBUG: -ns not specified (btw len=%d)\n", len);
 #endif
@@ -103,55 +103,58 @@ void lenStr(char *str, long *count) {
 // 	exit code for the program
 int lenFile(char *flname, long *count) {
 #ifdef DEBUG
-	printf("DEBUG: entered lenFile");
+	printf("DEBUG: entered lenFile with flname='%s'\n", flname);
 #endif
 	FILE *fl = fopen((const char *)flname, "r");
 	if (!fl) {
-		printf("failed to open file \"%s\"", flname);
+		printf("failed to open file \"%s\"\n", flname);
 		return 1;
 	}
 
 	// work with a 256 byte buffer which should be good enough
-	char buffer[256];
+	char buffer[256] = "";
 	while (!feof(fl)) {
-		fgets(buffer, 256, fl);
-		lenStr(buffer, count);
+		memset(buffer, 0, 256);
+		fread(buffer, sizeof buffer, 1, fl);
+#ifdef DEBUG
+		printf("DEBUG: read '%s'\n", buffer);
+#endif
+		lenStr(buffer, count, 256);
 	}
 	fclose(fl);
-	printf("%d\n", *count);
+	printf("%d\n", (*count));
 	return 0;
 }
 
 int main(int argc, char **argv) {
 	// first we process the args
-	int argOffset;
 	int isOptionArg[argc];
-	for (argOffset = 1; argOffset < argc; argOffset++) {
+	for (int i = 1; i < argc; i++) {
 		// skip non-options
-		isOptionArg[argOffset] = 0;
-		if (argv[argOffset][0] != '-') continue;
-		else isOptionArg[argOffset] = 1;
+		isOptionArg[i] = 0;
+		if (argv[i][0] != '-') continue;
+		else isOptionArg[i] = 1;
 		
 		// pretend first argument is file name and not the string to process
-		if (orCmpS(argv[argOffset], "-f", "--use-file"))
+		if (orCmpS(argv[i], "-f", "--use-file"))
 			arg_useFile = 1;
 		// use different separator than space
-		else if (orCmpS(argv[argOffset], "-s", "--separator"))
-			arg_separator = argv[++argOffset][0];
+		else if (orCmpS(argv[i], "-s", "--separator"))
+			arg_separator = argv[++i][0];
 		// set limit and exit with err code 1 if count exceeds limit
-		else if (orCmpS(argv[argOffset], "-l", "--limit"))
-			sscanf(argv[++argOffset], "%d", &arg_limit);
+		else if (orCmpS(argv[i], "-l", "--limit"))
+			sscanf(argv[++i], "%d", &arg_limit);
 		// disallow separator and just count the character count
-		else if (orCmpS(argv[argOffset], "-ns", "--no-separator"))
+		else if (orCmpS(argv[i], "-ns", "--no-separator"))
 			arg_noSeparator = 1;
 		// show help and exit
-		else if (orCmpS(argv[argOffset], "-?", "--help"))
+		else if (orCmpS(argv[i], "-?", "--help"))
 			arg_showHelp = 1;
 		// cancel option scanning
-		else if (!strncmp(argv[argOffset], "--",
-			maxsize((size_t)2, sizeof argv[argOffset]))
+		else if (!strncmp(argv[i], "--",
+			maxsize((size_t)2, sizeof argv[i]))
 		) {
-			argOffset++;
+			i++;
 			break;
 		}
 	}
@@ -187,38 +190,32 @@ int main(int argc, char **argv) {
 	}
 
 #ifdef DEBUG
-	printf("DEBUG: arg parse finished, argOffset=%d, argc=%d, anyNormalArgs=%d\n", argOffset, argc, anyNormalArgs);
+	printf("DEBUG: arg parse finished, argc=%d, anyNormalArgs=%d\n", argc, anyNormalArgs);
 #endif
 
 	if (arg_noSeparator) count--;
 	if (!anyNormalArgs) {
-		// FIXME: this code is kinda buggy and doesnt handle EOF when
-		// some cli util (i.e. cat) pipes to this program correctly
-
 		// 4kib of input should be sufficient
 		char input[4096];
-		int h = 0;
-		int lim = 10000;
 		do {
 			fgets(input, 4096, stdin);
 #ifdef DEBUG
 			printf("DEBUG: inputted '%s'\n", input);
 			printf("DEBUG: last char is %d\n", input[strlen(input)-2]);
 #endif
-			lenStr(input, &count);
+			lenStr(input, &count, LONG_MAX);
 			count--;
-			h++;
 		}
-		while (input[strlen(input)-1] != EOF && h < lim);
+		while (!feof(stdin));
 		printf("%d\n", count);
 		return 0;
 	}
 
-	if (arg_useFile) return lenFile(argv[argOffset], &count);
 	for (int i = 1; i < argc; i++) {
 		count = arg_noSeparator ? 0 : 1;
 		if (isOptionArg[i]) continue;
-		lenStr(argv[i], &count);
+		if (arg_useFile) return lenFile(argv[i], &count);
+		lenStr(argv[i], &count, LONG_MAX);
 		printf("%d\n", count);
 	}
 	return 0;
