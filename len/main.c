@@ -9,7 +9,8 @@
 #include <string.h>
 #include <limits.h>
 
-// uncomment the line below if you'd like to see debug messages in stdout
+// comment out the line below if you'd like to hide debug messages in stdout
+// (i.e. prepare for prod)
 #define DEBUG
 
 // arg options, these are the defaults
@@ -62,6 +63,12 @@ int orCmpS(const char *source, const char *matchA, const char *matchB) {
 	);
 }
 
+// lenStr
+// desc:
+// 	calculates the length of the specified str and puts the value in count
+// args:
+// 	char *str - the string, duh
+// 	long *count - pointer to the count, duh (part ii)
 void lenStr(char *str, long *count) {
 #ifdef DEBUG
 	printf("DEBUG: entered lenStr with count=%d\n", *count);
@@ -86,6 +93,14 @@ void lenStr(char *str, long *count) {
 #endif
 }
 
+// lenFile
+// desc:
+// 	same as lenStr, but with a file
+// args:
+// 	char *flname - file name
+// 	long *count  - ditto
+// returns:
+// 	exit code for the program
 int lenFile(char *flname, long *count) {
 #ifdef DEBUG
 	printf("DEBUG: entered lenFile");
