@@ -13,6 +13,11 @@
 // (i.e. prepare for prod)
 #define DEBUG
 
+// work with a 256 byte buffer which should be good enough
+#define FILE_BUFFER_SIZE 256
+// 4kib of input should be sufficient
+#define STDIN_MAX_LINE_LENGTH 4096
+
 // arg options, these are the defaults
 int  arg_useFile     = 0;        // -f  | --use-file
 char arg_separator   = ' ';      // -s  | --separator
@@ -111,15 +116,14 @@ int lenFile(char *flname, long *count) {
 		return 1;
 	}
 
-	// work with a 256 byte buffer which should be good enough
-	char buffer[256] = "";
+	char buffer[FILE_BUFFER_SIZE] = "";
 	while (!feof(fl)) {
-		memset(buffer, 0, 256);
-		fread(buffer, sizeof buffer, 1, fl);
+		memset(buffer, 0, FILE_BUFFER_SIZE);
+		fread(buffer, FILE_BUFFER_SIZE, 1, fl);
 #ifdef DEBUG
 		printf("DEBUG: read '%s'\n", buffer);
 #endif
-		lenStr(buffer, count, 256);
+		lenStr(buffer, count, FILE_BUFFER_SIZE);
 	}
 	fclose(fl);
 	printf("%d\n", (*count));
@@ -195,10 +199,9 @@ int main(int argc, char **argv) {
 
 	if (arg_noSeparator) count--;
 	if (!anyNormalArgs) {
-		// 4kib of input should be sufficient
-		char input[4096];
+		char input[STDIN_MAX_LINE_LENGTH];
 		do {
-			fgets(input, 4096, stdin);
+			fgets(input, STDIN_MAX_LINE_LENGTH, stdin);
 #ifdef DEBUG
 			printf("DEBUG: inputted '%s'\n", input);
 			printf("DEBUG: last char is %d\n", input[strlen(input)-2]);
