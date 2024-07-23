@@ -5,13 +5,8 @@
 //
 // github.com/BrilliantOS/mtutils
 
-#include <stdio.h>
-#include <string.h>
+#include "../globals.h"
 #include <limits.h>
-
-// comment out the line below if you'd like to hide debug messages in stdout
-// (i.e. prepare for prod)
-#define DEBUG
 
 // work with a 256 byte buffer which should be good enough
 #define FILE_BUFFER_SIZE 256
@@ -24,49 +19,6 @@ char arg_separator   = ' ';      // -s  | --separator
 long arg_limit       = LONG_MAX; // -l  | --limit
 int  arg_noSeparator = 0;        // -ns | --no-separator
 int  arg_showHelp    = 0;        // -?  | --help
-
-size_t maxsize(size_t a, size_t b) {
-	return a > b ? a : b;
-}
-
-// orCmp
-// desc:
-// 	compares a string with 2 other strings using OR
-// args:
-// 	const char *source - source string
-// 	size_t srcLen      - length of the source string
-// 	const char *matchA - first string to match against
-// 	size_t lenA        - length of the first string
-// 	const char *matchB - second string to match against
-// 	size_t lenB        - length of the second string
-// returns:
-// 	1 if source and matchA match or if source and matchB match, otherwise 0
-int orCmp(
-	const char *source, size_t srcLen,
-	const char *matchA, size_t lenA,
-	const char *matchB, size_t lenB
-) {
-	return (
-		strncmp(source, matchA, maxsize(srcLen, lenA)) == 0
-		|| strncmp(source, matchB, maxsize(srcLen, lenB)) == 0
-	);
-}
-// orCmpS
-// desc:
-//	simpler version of orCmp
-// args:
-//	const char *source - source string
-//	const char *matchA - first string to match against
-//	const char *matchB - second string to match against
-// returns:
-// 	1 if source and matchA match or if source and matchB match, otherwise 0
-int orCmpS(const char *source, const char *matchA, const char *matchB) {
-	return orCmp(
-		source, strnlen(source, sizeof source),
-		matchA, strnlen(matchA, sizeof matchA),
-		matchB, strnlen(matchB, sizeof matchB)
-	);
-}
 
 // lenStr
 // desc:
