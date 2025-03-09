@@ -1,7 +1,7 @@
 // globals.h
 // ----------
 // global stuff for mtutils
-// written by Matto58 and licensed under the CC BY-SA 4.0 license
+// written by Matto58 and licensed under the MIT license
 //
 // github.com/BrilliantOS/mtutils
 
