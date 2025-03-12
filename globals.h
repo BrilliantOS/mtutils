@@ -75,6 +75,7 @@ int orCmpS(const char *source, const char *matchA, const char *matchB) {
 	);
 }
 
+/*
 // sortSwap
 // desc:
 // 	swaps 2 items in a string array
@@ -126,4 +127,4 @@ void bubbleSortStrs(char **arr, int descending) {
 	size_t len = (sizeof arr)/(sizeof arr[0]);
 	bubbleSortStrsKS(arr, len, descending);
 }
-
+*/

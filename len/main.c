@@ -78,7 +78,7 @@ int lenFile(char *flname, long *count) {
 		lenStr(buffer, count, FILE_BUFFER_SIZE);
 	}
 	fclose(fl);
-	printf("%d\n", (*count));
+	printf("%ld\n", (*count));
 	return 0;
 }
 
@@ -99,7 +99,7 @@ int main(int argc, char **argv) {
 			arg_separator = argv[++i][0];
 		// set limit and exit with err code 1 if count exceeds limit
 		else if (orCmpS(argv[i], "-l", "--limit"))
-			sscanf(argv[++i], "%d", &arg_limit);
+			sscanf(argv[++i], "%ld", &arg_limit);
 		// disallow separator and just count the character count
 		else if (orCmpS(argv[i], "-ns", "--no-separator"))
 			arg_noSeparator = 1;
@@ -129,8 +129,7 @@ int main(int argc, char **argv) {
 			"  -?  | --help          shows this help\n"
 			"  -ns | --no-separator  counts just characters; ignores -s\n"
 			"----\n"
-			"written by Matto58 and licensed under the CC BY-SA 4.0 license:\n"
-			"https://creativecommons.org/licenses/by-sa/4.0\n"
+			"written by Matto58 and licensed under the MIT license\n"
 			"report bugs/suggestions at https://github.com/BrilliantOS/mtutils/issues\n"
 			"(english or czech)\n", argv[0], argv[0]);
 		return 0;
@@ -162,7 +161,7 @@ int main(int argc, char **argv) {
 			count--;
 		}
 		while (!feof(stdin));
-		printf("%d\n", count);
+		printf("%ld\n", count);
 		return 0;
 	}
 
@@ -171,7 +170,7 @@ int main(int argc, char **argv) {
 		if (isOptionArg[i]) continue;
 		if (arg_useFile) return lenFile(argv[i], &count);
 		lenStr(argv[i], &count, LONG_MAX);
-		printf("%d\n", count);
+		printf("%ld\n", count);
 	}
 	return 0;
 }
