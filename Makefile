@@ -8,13 +8,21 @@ help:
 out:
 	mkdir -p out
 
-len: len/main.c | out
+len: out
 	gcc len/main.c -o out/len
 
-ls: ls/main.c | out
+ls: out
 	gcc ls/main.c -o out/ls
 
-luna: luna/main.c | out
+luna: out
 	gcc luna/main.c -o out/luna
 
-all: len ls luna
+md: out
+	gcc md/main.c -o out/md
+	ln -s out/md out/mkdir
+
+rd: out
+	gcc rd/main.c -o out/rd
+	ln -s out/rd out/rmdir
+
+all: len ls luna md rd
