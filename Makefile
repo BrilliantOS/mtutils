@@ -14,9 +14,6 @@ len: out
 ls: out
 	gcc ls/main.c -o out/ls
 
-luna: out
-	gcc luna/main.c -o out/luna
-
 md: out
 	gcc md/main.c -o out/md
 	ln -s out/md mkdir
@@ -28,4 +25,7 @@ rd: out
 flsplit: out
 	gcc flsplit/main.c -o out/flsplit
 
-all: len ls luna md rd flsplit
+flunsplit: out
+	gcc flunsplit/main.c -o out/flunsplit
+
+all: len ls md rd flsplit flunsplit
