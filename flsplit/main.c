@@ -29,11 +29,7 @@ int main(int argc, char **argv) {
     FILE *inputFile = fopen(argv[2], "rb");
     void *buffer = malloc(BUF_SIZE);
     long chunkSize = -1;
-    printf("askjdajsghdaksjd 1\n");
     sscanf(argv[1], "%ld", &chunkSize);
-    printf("askjdajsghdaksjd 2\n");
-    printf("chunkSize = %ld\n", chunkSize);
-    printf("askjdajsghdaksjd 3\n");
 
     if (inputFile == NULL) {
         perror("flsplit - fopen");
@@ -65,7 +61,6 @@ int main(int argc, char **argv) {
             size_t readBytes = fread(buffer, 1, minsize(chunkSize - chunkBytes, BUF_SIZE), inputFile);
             fwrite(buffer, 1, readBytes, chunk);
             writtenBytes += readBytes;
-            //printf("meow chunkCount=%ld writtenBytes=%ld chunkSize=%ld readBytes=%ld\n", chunkCount, writtenBytes, chunkSize, readBytes);
             if (readBytes == 0) break; // don't forget ffs
         }
         fclose(chunk);
