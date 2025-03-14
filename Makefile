@@ -19,10 +19,13 @@ luna: out
 
 md: out
 	gcc md/main.c -o out/md
-	ln -s out/md out/mkdir
+	ln -s out/md mkdir
 
 rd: out
 	gcc rd/main.c -o out/rd
-	ln -s out/rd out/rmdir
+	ln -s out/rd rmdir
 
-all: len ls luna md rd
+flsplit: out
+	gcc flsplit/main.c -o out/flsplit
+
+all: len ls luna md rd flsplit
